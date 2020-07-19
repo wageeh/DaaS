@@ -9,8 +9,8 @@ namespace Appointments.API.BAL
 {
     public class AppointmentManager
     {
-        private readonly IDocumentDBRepository<Appointment> Respository;
-        public AppointmentManager(IDocumentDBRepository<Appointment> _respository)
+        private readonly ICosmosDBRepository<Appointment> Respository;
+        public AppointmentManager(ICosmosDBRepository<Appointment> _respository)
         {
             Respository = _respository;
         }
@@ -20,8 +20,8 @@ namespace Appointments.API.BAL
             newappointment.CreatedDate = DateTime.UtcNow;
             newappointment.HasConflict = false;
             newappointment.EntityId = Guid.NewGuid();
-            var item = await Respository.CreateItemAsync(newappointment);
-            return (Appointment)(dynamic)item;
+            var item = await Respository.CreateItemAsync(newappointment, newappointment.DoctorId);
+            return (Appointment)item;
         }
 
         public async Task<Appointment> UpdateAsync(Guid id, Appointment updatedappointment)
@@ -39,7 +39,7 @@ namespace Appointments.API.BAL
             {
                 throw new Exception("Id can not be found");
             }
-            await Respository.DeleteItemAsync(id);
+            await Respository.DeleteItemAsync(id, item.DoctorId);
         }
 
         public async Task<List<Appointment>> ListAsync()
@@ -48,26 +48,40 @@ namespace Appointments.API.BAL
             return appointments;
         }
 
-        public async Task<List<Appointment>> FilterByDoctorIdPatientIdAsync(string doctorid,string patientid)
+        public async Task<List<Appointment>> FilterByDoctorIdPatientIdAsync(string doctorid,string patientid,string from="",string to="")
         {
+            DateTime fromDate, toDate;
+            if (!DateTime.TryParse(from,out fromDate))
+            {
+                fromDate = DateTime.UtcNow.Date;
+            }
+            if (!DateTime.TryParse(to, out toDate))
+            {
+                toDate = DateTime.UtcNow.Date.AddDays(2);
+            }
             List<Appointment> appointments;
             if (doctorid!="" && patientid!="")
             {
-                appointments = (await Respository.GetItemsAsync(x => x.DoctorId==doctorid && x.PatientId == patientid)).ToList();
+                appointments = (await Respository.GetItemsAsync(x => x.DoctorId==doctorid && x.PatientId == patientid && x.AppointmentDate>=fromDate && x.AppointmentDate <=toDate)).ToList();
             }
             else if(doctorid != "")
             {
-                appointments = (await Respository.GetItemsAsync(x => x.DoctorId == doctorid)).ToList();
+                appointments = (await Respository.GetItemsAsync(x => x.DoctorId == doctorid && x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).ToList();
             }
             else if (patientid != "")
             {
-                appointments = (await Respository.GetItemsAsync(x => x.PatientId == patientid)).ToList();
+                appointments = (await Respository.GetItemsAsync(x => x.PatientId == patientid && x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).ToList();
             }
             else
             {
-                appointments = (await Respository.GetAllItemsAsync()).ToList();
+                appointments = (await Respository.GetItemsAsync(x=> x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).ToList();
             }
             return appointments;
+        }
+
+        public async Task<List<Appointment>> GetAllItemsAsync()
+        {
+            return (await Respository.GetAllItemsAsync()).ToList();
         }
 
         public async Task<Appointment> GetAsync(string id)

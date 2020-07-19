@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Core.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using UserManagement.API.BAL;
 using UserManagement.Enitites;
 
@@ -17,8 +12,8 @@ namespace UserManagement.API
 {
     public class Startup
     {
-        public static DocumentDBRepository<Doctor> _doctorContext;
-        public static DocumentDBRepository<Patient> _patientContext;
+        public static CosmosDBRepository<Doctor> _doctorContext;
+        public static CosmosDBRepository<Patient> _patientContext;
        
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
@@ -31,18 +26,20 @@ namespace UserManagement.API
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            _doctorContext = new DocumentDBRepository<Doctor>(Configuration.GetValue<string>(
+            _doctorContext = new CosmosDBRepository<Doctor>(Configuration.GetValue<string>(
                 "DoctorCollection:AccountEndpoint"), Configuration.GetValue<string>(
                 "DoctorCollection:AccountKey"), Configuration.GetValue<string>(
                 "DoctorCollection:Database"), Configuration.GetValue<string>(
-                "DoctorCollection:Collection"));
+                "DoctorCollection:Collection"), Configuration.GetValue<string>(
+                "DoctorCollection:PartitionKey"));
 
 
-            _patientContext = new DocumentDBRepository<Patient>(Configuration.GetValue<string>(
+            _patientContext = new CosmosDBRepository<Patient>(Configuration.GetValue<string>(
                 "PatientCollection:AccountEndpoint"), Configuration.GetValue<string>(
                 "PatientCollection:AccountKey"), Configuration.GetValue<string>(
                 "PatientCollection:Database"), Configuration.GetValue<string>(
-                "PatientCollection:Collection"));
+                "PatientCollection:Collection"), Configuration.GetValue<string>(
+                "PatientCollection:PartitionKey"));
         }
 
         public IConfiguration Configuration { get; }
@@ -53,8 +50,8 @@ namespace UserManagement.API
             services.AddControllers();
 
             // DependacyInjection
-            services.AddSingleton<IDocumentDBRepository<Doctor>>(_doctorContext);
-            services.AddSingleton<IDocumentDBRepository<Patient>>(_patientContext);
+            services.AddSingleton<ICosmosDBRepository<Doctor>>(_doctorContext);
+            services.AddSingleton<ICosmosDBRepository<Patient>>(_patientContext);
             // for filling initial data
             FillInitialData();
 

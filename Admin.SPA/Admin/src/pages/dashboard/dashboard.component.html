@@ -1,0 +1,34 @@
+<h3> Filter Section </h3>
+Doctor Name : <input (keyup)="customerNameChanged($event)"><br/> 
+Patient Name: <select (change)="selectOnChange($event.target)">
+    <option selected='selected'>All</option>
+    <option>On</option>
+    <option>Off</option>
+</select>
+<h2>Customers' Fleet</h2>
+<h3 align="right">Last Triggered Time :{{TriggerTime}}</h3>
+<ul >
+  <li *ngFor="let customer of Result" >
+    <h4>{{customer.name}}</h4>
+    <span>{{customer.city}}</span>
+    <div>
+        <!--<ul>
+            <li *ngFor="let vehicle of customer.Vehicles">
+                <span class="badge">{{vehicle.VehicleId}}</span><br/>
+                <span>{{vehicle.RegId}}</span> <br/>
+                <span  *ngIf="vehicle.Status">{{vehicle.LastStatusTime}}</span>
+            </li>
+        </ul>-->
+        <div class="card-group">
+        <div class="card text-white mb-3 {{vehicle.status ? 'bg-success' : 'bg-danger'}}" style="width: 18rem;" *ngFor="let vehicle of customer.vehicles">
+          <img src="../../assets/images/final1988-red-car.svg" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">Vehicle Reg ID : {{vehicle.regid}}</h5>
+            <p class="card-text"> Vehicle ID : {{vehicle.vin}}</p>
+            <span  *ngIf="vehicle.Status">Last Status sent : {{vehicle.laststatustime}}</span>
+          </div>
+        </div>
+        </div>
+    </div>
+  </li>
+</ul>

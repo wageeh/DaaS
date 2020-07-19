@@ -17,7 +17,7 @@ namespace Appointments.API
 {
     public class Startup
     {
-        public static DocumentDBRepository<Appointment> _appointmentContext;
+        public static CosmosDBRepository<Appointment> _appointmentContext;
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
@@ -28,11 +28,12 @@ namespace Appointments.API
                .AddEnvironmentVariables();
             Configuration = builder.Build();
 
-            _appointmentContext = new DocumentDBRepository<Appointment>(Configuration.GetValue<string>(
+            _appointmentContext = new CosmosDBRepository<Appointment>(Configuration.GetValue<string>(
                 "AppointmentsCollection:AccountEndpoint"), Configuration.GetValue<string>(
                 "AppointmentsCollection:AccountKey"), Configuration.GetValue<string>(
                 "AppointmentsCollection:Database"), Configuration.GetValue<string>(
-                "AppointmentsCollection:Collection"));
+                "AppointmentsCollection:Collection"), Configuration.GetValue<string>(
+                "AppointmentsCollection:PartitionKey"));
 
         }
 
@@ -43,7 +44,7 @@ namespace Appointments.API
         {
             services.AddControllers();
             // DependacyInjection
-            services.AddSingleton<IDocumentDBRepository<Appointment>>(_appointmentContext);
+            services.AddSingleton<ICosmosDBRepository<Appointment>>(_appointmentContext);
             // for filling initial data
             FillInitialData();
 
@@ -54,14 +55,14 @@ namespace Appointments.API
         private void FillInitialData()
         {
             AppointmentManager appointmentManager = new AppointmentManager(_appointmentContext);
-            var list =  appointmentManager.FilterByDoctorIdPatientIdAsync("","").Result;
+            var list =  appointmentManager.GetAllItemsAsync().Result;
             if (list.Count < 3)
             {
                 var x = appointmentManager.CreateAsync(new Appointment()
                 {
                     PatientId= "19860813-1111",
                     DoctorId = "201012-1425",
-                    AppointmentDate= DateTime.UtcNow.AddDays(1).ToShortDateString(),
+                    AppointmentDate= DateTime.UtcNow.AddDays(1).Date,
                     AppointmentTimeSlot = 1
                 }).Result;
 
@@ -69,7 +70,7 @@ namespace Appointments.API
                 {
                     PatientId = "19750612-2222",
                     DoctorId = "201012-1425",
-                    AppointmentDate = DateTime.UtcNow.AddDays(1).ToShortDateString(),
+                    AppointmentDate = DateTime.UtcNow.AddDays(1).Date,
                     AppointmentTimeSlot = 3
                 }).Result;
 
@@ -77,7 +78,7 @@ namespace Appointments.API
                 {
                     PatientId = "19860813-1111",
                     DoctorId = "201012-1425",
-                    AppointmentDate = DateTime.UtcNow.AddDays(1).ToShortDateString(),
+                    AppointmentDate = DateTime.UtcNow.AddDays(1).Date,
                     AppointmentTimeSlot = 1
                 }).Result;
             }

@@ -14,9 +14,9 @@ namespace UserManagement.API.Controllers
     [ApiController]
     public class DoctorController : ControllerBase
     {
-        private readonly IDocumentDBRepository<Doctor> respository;
+        private readonly ICosmosDBRepository<Doctor> respository;
         private DoctorManager doctorManager;
-        public DoctorController(IDocumentDBRepository<Doctor> _respository)
+        public DoctorController(ICosmosDBRepository<Doctor> _respository)
         {
             respository = _respository;
             doctorManager = new DoctorManager(respository);
@@ -53,7 +53,7 @@ namespace UserManagement.API.Controllers
         {
             if (ModelState.IsValid)
             {
-                Doctor updateddoctor = await doctorManager.UpdateAsync(item.ItemId, item);
+                Doctor updateddoctor = await doctorManager.UpdateAsync(item.ItemId.ToString(), item);
                 return new OkObjectResult(updateddoctor);
             }
             else
@@ -85,11 +85,10 @@ namespace UserManagement.API.Controllers
             }
         }
 
-        [HttpGet("~/Details")]
-        [ActionName("Details")]
+        [HttpGet("Details/{id}")]
         public async Task<ActionResult> DetailsAsync(string id)
         {
-            Doctor item = await doctorManager.GetAsync(id);
+            Doctor item = await doctorManager.GetAsyncByDoctorId(id);
             return new OkObjectResult(item);
         }
     }

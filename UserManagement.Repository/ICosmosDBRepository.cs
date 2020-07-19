@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
 
 namespace Core.Repository
 {
-    public interface IDocumentDBRepository<T> where T : class
+    public interface ICosmosDBRepository<T> where T : class
     {
-        Task<Document> CreateItemAsync(T item);
-        Task DeleteItemAsync(string id);
+        Task<T> CreateItemAsync(T item,string partitionKeyValue);
+        Task<T> DeleteItemAsync(string id, string partitionKeyValue);
         Task<T> GetItemAsync(string id);
         Task<IEnumerable<T>> GetItemsAsync(Expression<Func<T, bool>> predicate);
         Task<IEnumerable<T>> GetAllItemsAsync();
-        Task<Document> UpdateItemAsync(string id, T item);
+        Task<T> UpdateItemAsync(string id, T item);
     }
 }

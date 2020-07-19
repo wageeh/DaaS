@@ -9,8 +9,8 @@ namespace UserManagement.API.BAL
 {
     public class DoctorManager
     {
-        private readonly IDocumentDBRepository<Doctor> Respository;
-        public DoctorManager(IDocumentDBRepository<Doctor> _respository)
+        private readonly ICosmosDBRepository<Doctor> Respository;
+        public DoctorManager(ICosmosDBRepository<Doctor> _respository)
         {
             Respository = _respository;
         }
@@ -18,7 +18,8 @@ namespace UserManagement.API.BAL
         public async Task<Doctor> CreateAsync(Doctor newdoctor)
         {
             newdoctor.CreatedDate = DateTime.UtcNow;
-            var item = await Respository.CreateItemAsync(newdoctor);
+            newdoctor.EntityId = Guid.NewGuid();
+            var item = await Respository.CreateItemAsync(newdoctor,newdoctor.Speciality.Id);
             return (Doctor)(dynamic)item;
         }
 
@@ -37,7 +38,7 @@ namespace UserManagement.API.BAL
             {
                 throw new Exception("Id can not be found");
             }
-            await Respository.DeleteItemAsync(id);
+            await Respository.DeleteItemAsync(id, item.Speciality.Id);
         }
 
         public async Task<List<Doctor>> ListAsync()
@@ -55,6 +56,12 @@ namespace UserManagement.API.BAL
         public async Task<Doctor> GetAsync(string id)
         {
             return await Respository.GetItemAsync(id);
+        }
+
+        public async Task<Doctor> GetAsyncByDoctorId(string doctorid)
+        {
+            var doctor = (await Respository.GetItemsAsync(x => x.ItemId == doctorid)).FirstOrDefault();
+            return doctor;
         }
     }
 }

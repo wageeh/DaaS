@@ -14,9 +14,9 @@ namespace UserManagement.API.Controllers
     [ApiController]
     public class PatientController : ControllerBase
     {
-        private readonly IDocumentDBRepository<Patient> respository;
+        private readonly ICosmosDBRepository<Patient> respository;
         private PatientManager patientManager;
-        public PatientController(IDocumentDBRepository<Patient> _respository)
+        public PatientController(ICosmosDBRepository<Patient> _respository)
         {
             respository = _respository;
             patientManager = new PatientManager(respository);
@@ -33,7 +33,7 @@ namespace UserManagement.API.Controllers
         [HttpPost]
         [ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> CreateAsync( Patient item)
+        public async Task<ActionResult> CreateAsync(Patient item)
         {
             if (ModelState.IsValid)
             {
@@ -85,11 +85,10 @@ namespace UserManagement.API.Controllers
             }
         }
 
-        [HttpGet("~/Details")]
-        [ActionName("Details")]
+        [HttpGet("Details/{id}")]
         public async Task<ActionResult> DetailsAsync(string id)
         {
-            Patient item = await patientManager.GetAsync(id);
+            Patient item = await patientManager.GetAsyncByPatientId(id);
             return new OkObjectResult(item);
         }
     }

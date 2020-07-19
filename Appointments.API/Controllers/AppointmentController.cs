@@ -14,18 +14,18 @@ namespace Appointments.API.Controllers
     [ApiController]
     public class AppointmentController : ControllerBase
     {
-        private readonly IDocumentDBRepository<Appointment> respository;
+        private readonly ICosmosDBRepository<Appointment> respository;
         private AppointmentManager appointmentsManager;
-        public AppointmentController(IDocumentDBRepository<Appointment> _respository)
+        public AppointmentController(ICosmosDBRepository<Appointment> _respository)
         {
             respository = _respository;
             appointmentsManager = new AppointmentManager(respository);
         }
         
         [HttpGet]
-        public async Task<ActionResult> ListAsync([FromQuery]string doctorId = "",string patientId="")
+        public async Task<ActionResult> ListAsync([FromQuery]string doctorId = "",string patientId="", string from = "", string to = "")
         {
-            List<Appointment> appointments = await appointmentsManager.FilterByDoctorIdPatientIdAsync(doctorId,patientId);
+            List<Appointment> appointments = await appointmentsManager.FilterByDoctorIdPatientIdAsync(doctorId,patientId,from,to);
             return new OkObjectResult(appointments);
         }
 
@@ -85,8 +85,7 @@ namespace Appointments.API.Controllers
             }
         }
 
-        [HttpGet("~/Details")]
-        [ActionName("Details")]
+        [HttpGet("Details/{id}")]
         public async Task<ActionResult> DetailsAsync(string id)
         {
             Appointment item = await appointmentsManager.GetAsync(id);
