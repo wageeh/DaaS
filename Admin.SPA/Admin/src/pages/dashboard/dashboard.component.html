@@ -1,16 +1,16 @@
 <h3> Filter Section </h3>
-Doctor Name : <input (keyup)="customerNameChanged($event)"><br/> 
-Patient Name: <select (change)="selectOnChange($event.target)">
-    <option selected='selected'>All</option>
-    <option>On</option>
-    <option>Off</option>
+Filter by Doctor : <select (change)="selectDoctorOnChange($event.target)" ng-model="selectedDoctor" >
+  <option ng-repeat="d:Doctor in DoctorList" ng-value="{{d}}">{{d.name}}</option>
+</select><br/> 
+Filter by Patient : <select (change)="selectPatientOnChange($event.target)" ng-model="selectedPatient" >
+  <option ng-repeat="p:Patient in PatientList" ng-value="{{p}}">{{p.name}}</option>
 </select>
-<h2>Customers' Fleet</h2>
+<h2>Appointments' List</h2>
 <h3 align="right">Last Triggered Time :{{TriggerTime}}</h3>
 <ul >
-  <li *ngFor="let customer of Result" >
-    <h4>{{customer.name}}</h4>
-    <span>{{customer.city}}</span>
+  <li *ngFor="let appointment of Result" >
+    <h4>{{appointment.name}}</h4>
+    <span>{{appointment.HasConflict}}</span>
     <div>
         <!--<ul>
             <li *ngFor="let vehicle of customer.Vehicles">
@@ -18,7 +18,7 @@ Patient Name: <select (change)="selectOnChange($event.target)">
                 <span>{{vehicle.RegId}}</span> <br/>
                 <span  *ngIf="vehicle.Status">{{vehicle.LastStatusTime}}</span>
             </li>
-        </ul>-->
+        </ul>
         <div class="card-group">
         <div class="card text-white mb-3 {{vehicle.status ? 'bg-success' : 'bg-danger'}}" style="width: 18rem;" *ngFor="let vehicle of customer.vehicles">
           <img src="../../assets/images/final1988-red-car.svg" class="card-img-top" alt="...">
@@ -28,7 +28,7 @@ Patient Name: <select (change)="selectOnChange($event.target)">
             <span  *ngIf="vehicle.Status">Last Status sent : {{vehicle.laststatustime}}</span>
           </div>
         </div>
-        </div>
+        </div>-->
     </div>
   </li>
 </ul>

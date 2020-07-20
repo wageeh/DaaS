@@ -19,26 +19,23 @@ export class DashboardComponent implements OnInit {
 
   public PatientList:any;
   public DoctorList:any;
-  public AppointmentList: Appointment[];
+  public AppointmentList: any;
   public Result:AppointmentDetails[];
-  public FliteredStatus:string;
   public TriggerTime:string;
-  filteredName: string;
 
   constructor(private doctorsService:DoctorsService,
     private patientsService:PatientsService,
     private appointmentsService:AppointmentsService) { 
-      this.FliteredStatus = 'All';
-      this.filteredName = '';
+      
   }
 
   ngOnInit() {
 
     this.initNewCall();
 
-    setInterval( ()=>{
+    /*setInterval( ()=>{
       this.initNewCall();
-    }, (1000 * 60));
+    }, (1000 * 60));*/
     
   }
 
@@ -54,6 +51,7 @@ export class DashboardComponent implements OnInit {
   public fillResultList(){
     this.Result = [];
     var appointment:Appointment;
+    if(this.AppointmentList != undefined){
     this.AppointmentList.forEach(appointment => {
       
       var appitem = {} as AppointmentDetails;
@@ -69,6 +67,7 @@ export class DashboardComponent implements OnInit {
       this.Result.push(appitem);
     });
   }
+  }
 
   public findFromStatus(key:string){
     /*if(this.VehicleStatus!= undefined){
@@ -83,11 +82,15 @@ export class DashboardComponent implements OnInit {
 
   public async customerNameChanged(event: any)
   {
-    this.filteredName = event.target.value;
+    //this.filteredName = event.target.value;
     this.initNewCall();
   }
 
-  public selectOnChange(target:any){
+  public selectDoctorOnChange(target:any){
+    this.initNewCall();
+  }
+
+  public selectPatientOnChange(target:any){
     this.initNewCall();
   }
 

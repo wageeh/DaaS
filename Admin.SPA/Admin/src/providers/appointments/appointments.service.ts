@@ -1,5 +1,6 @@
 import { CoreService } from '../core/core.service';
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 
 
 
@@ -20,29 +21,31 @@ export interface Appointment {
 
 export class AppointmentsService {
   
-  private  appointmenturl:string = 'appointmentsfilter'
+  private  appointmenturl:string = 'appointments/appointmentsfilter'
+  data: any;
   constructor(private coreService:CoreService) { }
 
-  public async ListAppointments()
+  public ListAppointments()
   {
-    const headers = new Headers();
-    
-    headers.append("Accept", "application/json");
-    headers.append("Content-Type", "application/json");
-
-    const data = await this.coreService.http<Appointment[]>(
-      new Request(
-        this.coreService.gatewayurl+this.appointmenturl,
-        {
-          method: "post",
-          body: JSON.stringify({
-            Minutes: 1
-          }),
-          headers:headers
-        }
-      )
-    );
-
-    return data;
+    var url:string = this.coreService.gatewayurl+this.appointmenturl;
+    this.coreService.httpOptions = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        'Ocp-Apim-Subscription-Key':'2e97c2daa919495786b9d89b948aefeb',
+        'Ocp-Apim-Trace': 'true'
+      })
+    };
+    var postdata={
+      fromdate:"",
+      todate:""
+    };
+    this.coreService.postData(url,postdata)
+    .subscribe(resp => {
+      return this.data.push(resp);
+    });
   }
 }

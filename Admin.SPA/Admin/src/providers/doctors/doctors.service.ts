@@ -1,5 +1,6 @@
 import { CoreService } from '../core/core.service';
 import { Injectable } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
 
 // Doctor Class
 export interface Doctor {
@@ -25,44 +26,44 @@ export class DoctorsService {
   constructor(private coreService:CoreService) { }
 
   public async ListDoctors()
-  {
-    const headers = new Headers();
-    headers.append("Accept", "application/json");
-    headers.append("Content-Type", "application/json");
+  {   
+
     var url:string = this.coreService.gatewayurl+this.doctorurl;
     
-    const data = await this.coreService.http<Doctor[]>(
-      new Request(
-        url,
-        {
-          method: "get",
-          headers:headers
-        }
-      )
-    );
-
+    this.coreService.httpOptions = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        'Ocp-Apim-Trace': 'true'
+      })
+    };
+    
+    const data = await this.coreService.getData(url);
     return data;
   }
 
   public async GetDoctorById(doctorId:string)
   {
-    const headers = new Headers();
-    headers.append("Accept", "application/json");
-    headers.append("Content-Type", "application/json");
-    headers.append("Id", "patientId");
     
     var url:string = this.coreService.gatewayurl+this.doctorurl+"details/";
    
-    const data = await this.coreService.http<Doctor[]>(
-      new Request(
-        url,
-        {
-          method: "get",
-          headers:headers
-        }
-      )
-    );
+    this.coreService.httpOptions = {
+      headers: new HttpHeaders({
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': '*',
+        'Accept': 'application/json',
+        "Content-Type": "application/json",
+        "Id": doctorId,
+        'Ocp-Apim-Trace': 'true'
 
+      })
+    };
+
+    const data = this.coreService.getData(url);
     return data;
   }
 }
