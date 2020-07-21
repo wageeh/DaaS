@@ -62,19 +62,19 @@ namespace Appointments.API.BAL
             List<Appointment> appointments;
             if (doctorid!="" && patientid!="")
             {
-                appointments = (await Respository.GetItemsAsync(x => x.DoctorId==doctorid && x.PatientId == patientid && x.AppointmentDate>=fromDate && x.AppointmentDate <=toDate)).ToList();
+                appointments = (await Respository.GetItemsAsync(x => x.DoctorId==doctorid && x.PatientId == patientid && x.AppointmentDate>=fromDate && x.AppointmentDate <=toDate)).OrderBy(x=>x.AppointmentDate).ThenBy(x => x.AppointmentTimeSlot).ToList();
             }
             else if(doctorid != "")
             {
-                appointments = (await Respository.GetItemsAsync(x => x.DoctorId == doctorid && x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).ToList();
+                appointments = (await Respository.GetItemsAsync(x => x.DoctorId == doctorid && x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).OrderBy(x => x.AppointmentDate).ThenBy(x => x.AppointmentTimeSlot).ToList();
             }
             else if (patientid != "")
             {
-                appointments = (await Respository.GetItemsAsync(x => x.PatientId == patientid && x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).ToList();
+                appointments = (await Respository.GetItemsAsync(x => x.PatientId == patientid && x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).OrderBy(x => x.AppointmentDate).ThenBy(x => x.AppointmentTimeSlot).ToList();
             }
             else
             {
-                appointments = (await Respository.GetItemsAsync(x=> x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).ToList();
+                appointments = (await Respository.GetItemsAsync(x=> x.AppointmentDate >= fromDate && x.AppointmentDate <= toDate)).OrderBy(x => x.AppointmentDate).ThenBy(x => x.AppointmentTimeSlot).ToList();
             }
             return appointments;
         }

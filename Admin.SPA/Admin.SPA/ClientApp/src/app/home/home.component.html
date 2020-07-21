@@ -1,0 +1,75 @@
+<div class="contianer">
+  <div class="filter-section">
+    <h3>Filter Section</h3>
+    <div class="d-block">
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label>Filter by Doctor </label>
+          <select id="doctorSelect" class="form-control" (change)="selectDoctorOnChange($event.target)">
+            <option value="">-- choose an option --</option>
+            <option *ngFor="let d of DoctorList" [value]="d.itemId">{{d.name}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label>Filter by Patient </label>
+          <select id="patientSelect" class="form-control" (change)="selectPatientOnChange($event.target)">
+            <option value="">-- choose an option --</option>
+            <option *ngFor="let p of PatientList" [value]="p.itemId">{{p.name}}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-3">
+          <label>Date from </label>
+          <input type="date" class="form-control" (change)="selectfromChange($event.target)"/>
+        </div>
+        <div class="form-group col-md-3">
+          <label>Date To </label>
+          <input type="date" class="form-control" (change)="selecttoChange($event.target)"/>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="my-4">
+    <div class="container">
+      <div class="row">
+        <h3>Appointments' List</h3>
+        <div class="col-12">
+
+          <div class="row day-columns">
+            <div class="day-column" *ngFor="let appointment of Result">
+
+              <div class="day-header">
+                {{appointment.AppointmentDate}}
+              </div>
+              <div class="day-content">
+                <div class="event {{appointment.HasConflict? 'red' : 'blue'}}">
+                  <span class="title"><span class="title">Dr / {{appointment.Doctor.name}}</span></span>
+                  <span class="title"><span class="title">Patient : {{appointment.Patient.name}}</span></span>
+                  <footer>
+                    <span></span>
+                    <span>Time Slot : {{appointment.appointmentTimeSlot}}</span>
+                  </footer>
+                </div>
+
+              </div>
+              <!--<div class="day-footer">4 tasks</div>-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--<h3 align="right">Last Triggered Time :{{TriggerTime
+                }}</h3>
+                <ul>
+                  <li *ngFor="let appointment of Result">
+                    <h4>{{appointment.name}}</h4>
+                    <span>{{appointment.HasConflict}}</span>
+                    <div>
+
+                    </div>
+                  </li>
+                </ul>-->

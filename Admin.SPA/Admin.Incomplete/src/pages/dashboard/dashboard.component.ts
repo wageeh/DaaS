@@ -52,21 +52,21 @@ export class DashboardComponent implements OnInit {
     this.Result = [];
     var appointment:Appointment;
     if(this.AppointmentList != undefined){
-    this.AppointmentList.forEach(appointment => {
-      
-      var appitem = {} as AppointmentDetails;
-      appitem.AppointmentDate = appointment.AppointmentDate;
-      appitem.CreatedDate = appointment.CreatedDate;
-      appitem.appointmentTimeSlot = appointment.appointmentTimeSlot;
-      appitem.HasConflict = appointment.HasConflict;
-      appitem.DoctorId = appointment.DoctorId;
-      appitem.Doctor = this.DoctorList.filter(x => x.itemId == appitem.DoctorId)[0];
-      appitem.PatientId = appointment.PatientId;
-      appitem.Patient = this.PatientList.filter(x => x.itemId == appitem.PatientId)[0];
-      
-      this.Result.push(appitem);
-    });
-  }
+      this.AppointmentList.forEach(appointment => {
+        
+        var appitem = {} as AppointmentDetails;
+        appitem.AppointmentDate = appointment.AppointmentDate;
+        appitem.CreatedDate = appointment.CreatedDate;
+        appitem.appointmentTimeSlot = appointment.appointmentTimeSlot;
+        appitem.HasConflict = appointment.HasConflict;
+        appitem.DoctorId = appointment.DoctorId;
+        appitem.Doctor = this.DoctorList.filter(x => x.itemId == appitem.DoctorId)[0];
+        appitem.PatientId = appointment.PatientId;
+        appitem.Patient = this.PatientList.filter(x => x.itemId == appitem.PatientId)[0];
+        
+        this.Result.push(appitem);
+      });
+    }
   }
 
   public findFromStatus(key:string){

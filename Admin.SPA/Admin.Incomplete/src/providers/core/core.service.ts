@@ -17,26 +17,15 @@ export class CoreService {
       Accept: 'application/json'
     })
   };
-  /*public async http<T>(
-    request: RequestInfo
-  ): Promise<T> {
-    const response = await fetch(request);
-    const body = await response.json();
-    debugger;
-    return body;
-  };*/
-
-  // HttpClient API get() get data
-  async getData(url): Promise<any>{
+ 
+  private result:any;
+  async getData(url){
     // this.presentLoading();
-    const response = this.http.get<any>(url,this.httpOptions)
-    .toPromise();
-    return response;
-    /*.pipe(
-      retry(1),
-      catchError(this.handleError),
-      // finalize(() => { this.dismissLoading(); })
-    );*/
+    this.http.get<any>('https://daas-usermanagementapi.azurewebsites.net/api/patient/').subscribe(result => {
+     return result;
+    }, error => console.error(error));
+    //return this.result;
+   
   }
 
   // HttpClient API Post() data
